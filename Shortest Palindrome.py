@@ -5,7 +5,7 @@ Created on Fri Sep 20 08:22:56 2024
 @author: priya
 """
 
-lass Solution:
+class Solution:
     def shortestPalindrome(self, s):
         # Create a new string which is the original string + '#' + reverse of the string
         # The '#' acts as a separator to avoid overlap.
