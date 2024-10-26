@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Oct 26 09:23:22 2024
-
-@author: priya
-"""
-
 # Definition for a binary tree node.
 # class TreeNode(object):
 #     def __init__(self, val=0, left=None, right=None):
@@ -20,21 +13,38 @@ class Solution(object):
         :rtype: List[int]
         """
         
-        def height(root):
-            if not root:
+        # Step 1: Compute height of each node and store in height_map
+        height_map = {}
+        def compute_height(node):
+            if not node:
                 return 0
-            return 1 + max(height(root.left), height(root.right))
-
-        # valToMaxHeight[val] := the maximum height without the node with `val`
-        valToMaxHeight = {}
-
-        # maxHeight := the maximum height without the current node `root`
-        def dfs(root, depth, maxHeight):
-            if not root:
+            left_height = compute_height(node.left)
+            right_height = compute_height(node.right)
+            height_map[node.val] = 1 + max(left_height, right_height)
+            return height_map[node.val]
+        
+        compute_height(root)
+        
+        # Step 2: Perform DFS to compute maximum height excluding each node
+        val_to_max_height = {}
+        
+        def dfs(node, depth, max_height_without_node):
+            if not node:
                 return
-            valToMaxHeight[root.val] = maxHeight
-            dfs(root.left, depth + 1, max(maxHeight, depth + height(root.right)))
-            dfs(root.right, depth + 1, max(maxHeight, depth + height(root.left)))
+            val_to_max_height[node.val] = max_height_without_node
+            # Check if left and right children exist before accessing their heights
+            left_max_height = max(
+                max_height_without_node,
+                depth + (height_map[node.right.val] if node.right else 0)
+            )
+            right_max_height = max(
+                max_height_without_node,
+                depth + (height_map[node.left.val] if node.left else 0)
+            )
+            dfs(node.left, depth + 1, left_max_height)
+            dfs(node.right, depth + 1, right_max_height)
 
         dfs(root, 0, 0)
-        return [valToMaxHeight[query] for query in queries]
+        
+        # Step 3: Answer each query by fetching precomputed max height without the queried node
+        return [val_to_max_height[query] for query in queries]
