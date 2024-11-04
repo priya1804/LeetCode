@@ -11,15 +11,17 @@ class Solution(object):
         :type s: str
         :rtype: int
         """
-        comp = ""
         n = len(s)
-        i = 0
-
-        while i < n:
-            ch = s[i]
-            cnt = 0
-            while i < n and s[i] == ch and cnt < 9:
-                cnt += 1
-                i += 1
-            comp += str(cnt) + ch
-        return comp
+        res = []
+        count = 1
+        letter = s[0]
+        for i in range(1, n):
+            if s[i] != s[i-1] or count >= 9:
+                res.append(str(count))
+                res.append(letter)
+                count = 0
+            count += 1
+            letter = s[i]
+        res.append(str(count))
+        res.append(letter)
+        return ''.join(res)
